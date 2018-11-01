@@ -38,7 +38,7 @@ namespace AmnesiaPreprocessor.Core.Entities
             ProcessedFiles = new Dictionary<string, string>();
             foreach(var sourceFilePath in SourceHpsFiles)
             {
-                ProcessedFiles.Add(Path.GetFileName(sourceFilePath), File.ReadAllText(sourceFilePath));
+                ProcessedFiles.Add($"{Path.GetFileNameWithoutExtension(sourceFilePath)}.hps", File.ReadAllText(sourceFilePath));
             }
         }
     }
