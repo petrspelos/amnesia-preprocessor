@@ -43,7 +43,7 @@ namespace AmnesiaPreprocessor.ConsoleApp
             generatePreloadsDirective.Execute(cs);
             removeCommentsDirective.Execute(cs);
             
-            if(doNotMinify)
+            if(!doNotMinify)
             {
                 minifyCodeDirective.Execute(cs);
             }
