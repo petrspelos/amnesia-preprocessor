@@ -52,6 +52,10 @@ namespace AmnesiaPreprocessor.ConsoleApp
             {
                 File.WriteAllText($@"{csPath}\maps\{compiledFile.Key}", compiledFile.Value);
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Preprocessing done!");
+            Console.ResetColor();
         }
     }
 }
