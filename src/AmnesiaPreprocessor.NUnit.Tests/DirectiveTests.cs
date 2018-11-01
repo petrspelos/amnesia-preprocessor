@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace AmnesiaPreprocessor.NUnit.Tests
 {
-    public class Tests
+    public class DirectiveTests
     {
         [SetUp]
         public void Setup()
