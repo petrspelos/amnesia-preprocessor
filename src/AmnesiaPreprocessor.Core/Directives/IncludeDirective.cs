@@ -10,8 +10,17 @@ namespace AmnesiaPreprocessor.Core.Directives
     public class IncludeDirective : IDirective
     {
         private readonly Regex IncludeStatementRegex = new Regex(@"#include ""(.*?)""(\n|\r)");
+        private readonly Regex OnEnterContentRegex = new Regex(@"void[\n\r\s]+?OnEnter[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{(([^{]|\{.*?\})*?)}", RegexOptions.Singleline);
+        private readonly Regex OnStartContentRegex = new Regex(@"void[\n\r\s]+?OnStart[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{(([^{]|\{.*?\})*?)}", RegexOptions.Singleline);
+        private readonly Regex OnLeaveContentRegex = new Regex(@"void[\n\r\s]+?OnLeave[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{(([^{]|\{.*?\})*?)}", RegexOptions.Singleline);
+        private static readonly Regex OnEnterRegex = new Regex(@"void[\n\r\s]+?OnEnter[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{");
+        private static readonly Regex OnStartRegex = new Regex(@"void[\n\r\s]+?OnStart[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{");
+        private static readonly Regex OnLeaveRegex = new Regex(@"void[\n\r\s]+?OnLeave[\n\r\s]*?\([\n\r\s]*?\)[\n\r\s]*?{");
         private List<string> IgnoredIncludes = new List<string> { "AmnesiaSignatures.cpp" };
         private CustomStory customStory;
+        private string OnStartMergeRequest = "";
+        private string OnEnterMergeRequest = "";
+        private string OnLeaveMergeRequest = "";
 
         public void Execute(CustomStory customStory)
         {
@@ -29,6 +38,7 @@ namespace AmnesiaPreprocessor.Core.Directives
             var dependencies = GetSourceCodeDependencies(sourceCode);
             sourceCode = StripIncludeDirectives(sourceCode);
             sourceCode = AppendFoundDependencies(sourceCode, dependencies);
+            sourceCode = MergeAndResetRequests(sourceCode);
             return sourceCode;
         }
 
@@ -84,7 +94,89 @@ namespace AmnesiaPreprocessor.Core.Directives
                 }
             }
 
-            return StripIncludeDirectives(dependencySource);
+            dependencySource = StripIncludeDirectives(dependencySource);
+
+            return SetMergeRequestsAndStripThem(dependencySource);
+        }
+
+        private string SetMergeRequestsAndStripThem(string sourceCode)
+        {
+            if(OnEnterContentRegex.IsMatch(sourceCode))
+            {
+                OnEnterMergeRequest = OnEnterContentRegex.Match(sourceCode).Groups[1].Value;
+                sourceCode = OnEnterContentRegex.Replace(sourceCode, "");
+            }
+
+            if(OnStartContentRegex.IsMatch(sourceCode))
+            {
+                OnStartMergeRequest = OnStartContentRegex.Match(sourceCode).Groups[1].Value;
+                sourceCode = OnStartContentRegex.Replace(sourceCode, "");
+            }
+
+            if(OnLeaveContentRegex.IsMatch(sourceCode))
+            {
+                OnLeaveMergeRequest = OnLeaveContentRegex.Match(sourceCode).Groups[1].Value;
+                sourceCode = OnLeaveContentRegex.Replace(sourceCode, "");
+            }
+
+            return sourceCode;
+        }
+
+        private string MergeAndResetRequests(string sourceCode)
+        {
+            var resultSb = new StringBuilder(sourceCode);
+            
+            // Merge OnEnter
+            if(!string.IsNullOrEmpty(OnEnterMergeRequest))
+            {
+                if(OnEnterRegex.IsMatch(sourceCode))
+                {
+                    var newCode = OnEnterRegex.Replace(resultSb.ToString(), $"void OnEnter() {{ {OnEnterMergeRequest}");
+                    resultSb = new StringBuilder(newCode);
+                }
+                else
+                {
+                    resultSb.Append($"void OnEnter() {{ {OnEnterMergeRequest} }}");
+                }
+                
+                OnEnterMergeRequest = "";
+            }
+
+
+            // Merge OnStart
+            if(!string.IsNullOrEmpty(OnStartMergeRequest))
+            {
+                if(OnStartRegex.IsMatch(sourceCode))
+                {
+                    var newCode = OnStartRegex.Replace(resultSb.ToString(), $"void OnStart() {{ {OnStartMergeRequest}");
+                    resultSb = new StringBuilder(newCode);
+                }
+                else
+                {
+                    resultSb.Append($"void OnStart() {{ {OnStartMergeRequest} }}");
+                }
+                
+                OnStartMergeRequest = "";
+            }
+
+
+            // Merge OnLeave
+            if(!string.IsNullOrEmpty(OnLeaveMergeRequest))
+            {
+                if(OnLeaveRegex.IsMatch(sourceCode))
+                {
+                    var newCode = OnLeaveRegex.Replace(resultSb.ToString(), $"void OnLeave() {{ {OnLeaveMergeRequest}");
+                    resultSb = new StringBuilder(newCode);
+                }
+                else
+                {
+                    resultSb.Append($"void OnLeave() {{ {OnLeaveMergeRequest} }}");
+                }
+                
+                OnLeaveMergeRequest = "";
+            }
+
+            return resultSb.ToString();
         }
     }
 }
