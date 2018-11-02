@@ -38,14 +38,25 @@ namespace AmnesiaPreprocessor.ConsoleApp
             IDirective removeCommentsDirective = new RemoveCommentsDirective();
             IDirective minifyCodeDirective = new MinifyCodeDirective();
 
-            includeDirective.Execute(cs);
-            stringInterpolationDirective.Execute(cs);
-            generatePreloadsDirective.Execute(cs);
-            removeCommentsDirective.Execute(cs);
-            
-            if(!doNotMinify)
+            try
             {
-                minifyCodeDirective.Execute(cs);
+                includeDirective.Execute(cs);
+                stringInterpolationDirective.Execute(cs);
+                generatePreloadsDirective.Execute(cs);
+                removeCommentsDirective.Execute(cs);
+                
+                if(!doNotMinify)
+                {
+                    minifyCodeDirective.Execute(cs);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Preprocessing failed!");
+                Console.WriteLine($"Reason: {e.Message}");
+                Console.ResetColor();
+                return;
             }
 
             foreach(var compiledFile in cs.ProcessedFiles)
