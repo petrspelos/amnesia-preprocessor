@@ -1,12 +1,12 @@
 # Amnesia: Preprocessor
 
-![Badge](PreprocessorBadge.png)
+![Badge](https://i.imgur.com/TYmwsk4.png)
 
 * Include this badge on your project's page to support the preprocessor. ⭐
 
 HTML embed:
 ```html
-<a href="https://github.com/petrspelos/amnesia-preprocessor"><img src="https://github.com/petrspelos/amnesia-preprocessor/blob/master/PreprocessorBadge.png?raw=true"></a>
+<a href="https://github.com/petrspelos/amnesia-preprocessor"><img src="https://i.imgur.com/TYmwsk4.png"></a>
 ```
 
 ## About Preprocessor
