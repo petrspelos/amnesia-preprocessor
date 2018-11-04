@@ -139,3 +139,86 @@ This should be the result:
 This will generate your `.hps` files into your `maps` folder.
 
 ⚠ Don't forget to build your project after each change before you try it in game. Your changes are not reflected until you rebuild.
+
+## Preprocess on Save
+
+To make the preprocessor process your files every time you save, you will need an extension called `Trigger Task on Save`, you can find it again in the extensions manager in VSCode.
+
+> Don't forget to hit the reload button after installing the extension.
+
+1) Let's create a new Preprocessing task that will no pop-up the console window.
+
+You can add as many tasks to your `tasks.json` as you want, in this example, we have two tasks `Preprocess` and `Preprocess-Silent` the difference is that the Silent variation does not open an integrated terminal, which is good for triggering on save.
+
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Preprocess",
+            "type": "shell",
+            "command": "C:\\tools\\AmnesiaPreprocessor\\AmnesiaPreprocessor.exe '-cs:${workspaceFolder}'",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Preprocess-Silent",
+            "type": "shell",
+            "command": "C:\\tools\\AmnesiaPreprocessor\\AmnesiaPreprocessor.exe '-cs:${workspaceFolder}'",
+            "presentation": {
+                "reveal": "never",
+            }
+        }
+    ]
+}
+```
+
+> Don't forget to change your Preprocessor path if it is different for your use-case!
+
+2) In the same folder as your `tasks.json` create (or open if it already exists) a `settings.json` file.
+
+Inside it include the following snippet:
+```json
+"triggerTaskOnSave.tasks": {
+    "Preprocess-Silent": [
+        "**/*.shps",
+        "**/*.ihps"
+    ]
+}
+```
+
+The `Preprocess-Silent` refers to the name of the task defined inside `tasks.json`
+
+If you are creating this file for the first time, make sure you place the snippet in between `{` and `}`.
+
+For a new file, your setting should look like this:
+```json
+{
+    "triggerTaskOnSave.tasks": {
+        "Preprocess-Silent": [
+            "**/*.shps",
+            "**/*.ihps"
+        ]
+    }
+}
+```
+
+If `settings.json` aready existed for you, there should be other values before the `triggerTaskOnSave` section.
+
+For example:
+
+```json
+{
+    "git.ignoreLimitWarning": true,
+    "triggerTaskOnSave.tasks": {
+        "Preprocess-Silent": [
+            "**/*.shps",
+            "**/*.ihps"
+        ]
+    }
+}
+```
+
+And there you have it, now whenever you save any `.ihps` or `.shps` file the preprocessing task will run. :tada:
