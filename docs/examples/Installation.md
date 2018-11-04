@@ -48,6 +48,8 @@ The second option is for people who know what they're doing or are familiar with
 
 ## Using the Preprocessor in Visual Studio Code
 
+Before you start using the preprocessor make sure you [setup VSCode for Amnesia's Development](https://github.com/petrspelos/amnesia-preprocessor/blob/master/docs/examples/VSCodeDevSetup.md)
+
 1) Open your project folder in Visual Studio Code.
 
 You should see your project files in the tree view.
