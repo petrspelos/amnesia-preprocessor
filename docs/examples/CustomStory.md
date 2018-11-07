@@ -8,15 +8,15 @@ Here's our example custom story's structure:
 📁exampleStory
     ├ 📄custom_story_settings.cfg
     ├ 📄extra_english.lang
-    └ 📁maps
-        ├ 📄00_Intro.map
-        ├ 📄01_House.map
-        └ 📁source
-            ├ 📄00_Intro.shps
-            ├ 📄01_House.shps
-            └ 📁includes
-                ├ 📄MyCommonMethods.ihps
-                └ 📄MyOtherInclude.ihps
+    ├ 📁maps
+    │   ├ 📄00_Intro.map
+    │   └ 📄01_House.map
+    └ 📁source
+        ├ 📄00_Intro.shps
+        ├ 📄01_House.shps
+        └ 📁includes
+            ├ 📄MyCommonMethods.ihps
+            └ 📄MyOtherInclude.ihps
 ```
 
 >ℹ **What's important to notice**
