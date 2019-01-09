@@ -20,10 +20,10 @@ namespace AmnesiaPreprocessor.ConsoleApp
 
             var csPath = args.First(a => a.StartsWith("-cs:")).Substring(4);
 
-            if(!Directory.Exists($@"{csPath}\maps"))
+            if(!Directory.Exists(Path.Combine(csPath, "maps")))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($@"The path: '{csPath}\maps' does not exist!");
+                Console.WriteLine($@"The path: '{csPath}/maps' does not exist!");
                 Console.ResetColor();
                 return;
             }
@@ -61,7 +61,7 @@ namespace AmnesiaPreprocessor.ConsoleApp
 
             foreach(var compiledFile in cs.ProcessedFiles)
             {
-                File.WriteAllText($@"{csPath}\maps\{compiledFile.Key}", compiledFile.Value);
+                File.WriteAllText(Path.Combine(csPath, "maps", compiledFile.Key), compiledFile.Value);
             }
 
             Console.ForegroundColor = ConsoleColor.Green;
